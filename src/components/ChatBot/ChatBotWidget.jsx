@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import axios from "axios";
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 const ChatbotWidget = ({ onResponse }) => {
     const [inputVisible, setInputVisible] = useState(false);
@@ -17,7 +18,7 @@ const ChatbotWidget = ({ onResponse }) => {
         setLoading(true);
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/api/chatbot/conversar/", {
+            const response = await axios.post(`${baseUrl}/api/chatbot/conversar/`, {
                 pregunta: input,
             });
 
