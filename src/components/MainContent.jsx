@@ -34,7 +34,8 @@ const MainContent = ({ markdown, raw }) => {
                     </ReactMarkdown>
                 </article>
             ) : (
-                <p className="text-gray-500 text-sm">Haz una pregunta para ver el resultado aquí...</p>
+                <p className="text-gray-500 text-sm">Haz una pregunta, haciendo click en el ícono azul
+                    de chat de más abajo, para ver el resultado aquí...</p>
             )}
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare } from "lucide-react";
 import axios from "axios";
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
@@ -7,11 +7,18 @@ const ChatbotWidget = ({ onResponse }) => {
     const [inputVisible, setInputVisible] = useState(false);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
+    const inputRef = useRef(null);
 
     const toggleInput = () => {
         setInputVisible(!inputVisible);
         setInput("");
     };
+
+    useEffect(() => {
+        if (inputVisible && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [inputVisible]);
 
     const handleSend = async () => {
         if (!input.trim()) return;
@@ -38,7 +45,7 @@ const ChatbotWidget = ({ onResponse }) => {
     };
 
     return (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-50">
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-50 w-full px-4 sm:w-4/5 md:w-2/3 lg:w-1/2">
             {!inputVisible ? (
                 <button
                     onClick={toggleInput}
@@ -47,14 +54,18 @@ const ChatbotWidget = ({ onResponse }) => {
                     <MessageSquare />
                 </button>
             ) : (
-                <div className="flex items-center bg-white border shadow-xl rounded-xl px-4 py-2 gap-2">
+                <div className="flex items-center bg-white border shadow-xl rounded-xl px-4 py-2 gap-2 w-full">
                     <input
+                        ref={inputRef}
                         type="text"
-                        className="border rounded px-2 py-1 text-sm w-64"
+                        className="border rounded px-2 py-1 text-sm w-full"
                         placeholder="¿Qué deseas saber?"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSend();
+                            if (e.key === "Escape") setInputVisible(false);
+                        }}
                         disabled={loading}
                     />
                     {!loading ? (
