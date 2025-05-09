@@ -18,6 +18,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Test SSH Connection
+        run: |
+          ssh -o StrictHostKeyChecking=no deployuser@146.190.68.147 "echo '✅ Conexión exitosa'"
+
       - name: Copy frontend files to server
         run: |
           ssh -o StrictHostKeyChecking=no deployuser@146.190.68.147 "mkdir -p /home/deployuser/frontend/chatbot_react"
