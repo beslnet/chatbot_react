@@ -1,0 +1,39 @@
+name: Deploy Frontend to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy frontend files to server
+        run: |
+          ssh -o StrictHostKeyChecking=no deployuser@146.190.68.147 "mkdir -p /home/deployuser/frontend/chatbot_react"
+          rsync -avz --exclude '.git' ./ deployuser@146.190.68.147:/home/deployuser/frontend/chatbot_react/
+
+      - name: Install dependencies and build
+        run: |
+          ssh deployuser@146.190.68.147 "
+          cd /home/deployuser/frontend/chatbot_react &&
+          npm install &&
+          npm run build
+          "
+
+      - name: Restart PM2 Frontend Service
+        run: |
+          ssh deployuser@146.190.68.147 "
+          pm2 reload /home/deployuser/ecosystem.config.js --env production ||
+          pm2 start /home/deployuser/ecosystem.config.js
+          "
